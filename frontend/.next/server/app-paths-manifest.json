@@ -1,9 +1,0 @@
-{
-  "/_not-found/page": "app/_not-found/page.js",
-  "/manager/page": "app/manager/page.js",
-  "/counter/page": "app/counter/page.js",
-  "/customer/page": "app/customer/page.js",
-  "/receptionist/page": "app/receptionist/page.js",
-  "/display/page": "app/display/page.js",
-  "/page": "app/page.js"
-}
