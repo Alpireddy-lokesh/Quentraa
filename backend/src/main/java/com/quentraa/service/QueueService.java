@@ -25,9 +25,9 @@ public class QueueService {
         this.tokenRepository = tokenRepository;
     }
 
-    /** Call the next waiting token for a service. Returns null if none. */
+    /** Call the next waiting token for a branch. Returns null if none. */
     @Transactional
-    public Token callNext(UUID branchId, UUID serviceId) {
+    public Token callNext(UUID branchId) {
         List<Token> waiting = tokenRepository.findByBranchIdAndStatusOrderByCreatedAtAsc(
                 branchId, TokenStatus.WAITING);
         if (waiting.isEmpty()) {
