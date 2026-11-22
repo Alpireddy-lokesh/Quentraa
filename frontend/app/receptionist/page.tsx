@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TokenCard } from "@/components/tokens/TokenCard";
+import TokenCard from "@/components/tokens/TokenCard";
 
 export default function ReceptionistPage() {
   const [branchId, setBranchId] = useState("");
@@ -163,7 +163,7 @@ export default function ReceptionistPage() {
               <tbody>
                 {recentTokens.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="p-4 text-center text-gray-500">
+                    <td colSpan={5} className="p-4 text-center text-gray-500">
                       No recent tokens
                     </td>
                   </tr>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { TokenCard } from "@/components/tokens/TokenCard";
+import TokenCard from "@/components/tokens/TokenCard";
 
 export default function CounterPage() {
   const [branchId, setBranchId] = useState("");

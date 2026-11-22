@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TokenCard } from "@/components/tokens/TokenCard";
+import TokenCard from "@/components/tokens/TokenCard";
 
 export default function CustomerPortal() {
   const [branchId, setBranchId] = useState("");
