@@ -109,12 +109,3 @@ docker compose down
 docker compose logs -f
 ```
 
-## Next Steps
-
-- Implement backend entities and repositories (Days 5-9 of roadmap)
-- Implement authentication and role-based authorization (Days 10-12)
-- Build visitor registration and token creation flow (Days 13-15)
-- Implement queue engine and counter operations (Days 16-21)
-- Build Next.js screens and API integration (Days 22-26)
-- Add unit/integration tests (Days 27-31)
-- Deploy and document (Days 32-40)
