@@ -1,0 +1,14 @@
+target/
+!.target/quentraa-backend-0.0.1-SNAPSHOT.jar
+.git
+.gitignore
+mvnw
+mvnw.cmd
+pom.xml
+*.iml
+.idea/
+.vscode/
+.classpath
+.project
+.settings/
+.DS_Store
