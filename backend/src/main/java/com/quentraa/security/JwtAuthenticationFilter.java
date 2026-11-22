@@ -1,40 +1,33 @@
 package com.quentraa.security;
 
-import com.quentraa.model.User;
-import com.quentraa.repository.UserRepository;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 @Component
-public class JwtAuthenticationFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final UserRepository userRepository;
-
-    public JwtAuthenticationFilter(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    public void doFilter(HttpServletRequest request, HttpServletResponse response,
-                         FilterChain filterChain) throws IOException, ServletException {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
             if (isValid(token)) {
-                UUID userId = extractUserId(token);
-                userRepository.findById(userId).ifPresent(user -> {
-                    var auth = new org.springframework.security.authentication
-                            .UsernamePasswordAuthenticationToken(user, null,
-                                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
-                    SecurityContextHolder.getContext().setAuthentication(auth);
-                });
+                // Stub: set a default authority for the authenticated principal
+                var auth = new org.springframework.security.authentication
+                        .UsernamePasswordAuthenticationToken(
+                        "anonymous", null,
+                        List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER")));
+                SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }
         filterChain.doFilter(request, response);
@@ -42,9 +35,5 @@ public class JwtAuthenticationFilter {
 
     private boolean isValid(String token) {
         return token != null && !token.isBlank();
-    }
-
-    private UUID extractUserId(String token) {
-        return UUID.randomUUID();
     }
 }
