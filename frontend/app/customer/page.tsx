@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TokenCard from "@/components/tokens/TokenCard";
+import { getStompClient } from "@/lib/ws";
 
 export default function CustomerPortal() {
   const [branchId, setBranchId] = useState("");
@@ -12,21 +13,18 @@ export default function CustomerPortal() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+
   const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/tokens/join`, {
+      const res = await fetch(`${baseUrl}/api/tokens/join`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          branchId,
-          serviceId,
-          visitorName,
-          visitorPhone,
-        }),
+        body: JSON.stringify({ branchId, serviceId, visitorName, visitorPhone }),
       });
 
       if (!res.ok) throw new Error("Failed to join queue");
@@ -38,6 +36,25 @@ export default function CustomerPortal() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!branchId) return;
+    const client = getStompClient();
+    client.connect();
+    client.subscribe(`/topic/queue/${branchId}`, (frame) => {
+      try {
+        const updated = JSON.parse(frame.body);
+        if (updated.id && token && updated.id === token.id) {
+          setToken(updated);
+        }
+      } catch (e) {
+        // ignore parse errors
+      }
+    });
+    return () => {
+      client.unsubscribe(`/topic/queue/${branchId}`);
+    };
+  }, [branchId, token]);
 
   return (
     <div className="max-w-2xl mx-auto">

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import TokenCard from "@/components/tokens/TokenCard";
+import { getStompClient } from "@/lib/ws";
 
 export default function CounterPage() {
   const [branchId, setBranchId] = useState("");
@@ -11,12 +12,8 @@ export default function CounterPage() {
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
-  useEffect(() => {
+  const loadQueue = useCallback(async () => {
     if (!branchId) return;
-    loadQueue();
-  }, [branchId]);
-
-  const loadQueue = async () => {
     try {
       const res = await fetch(`${baseUrl}/api/tokens?branchId=${branchId}&status=WAITING`);
       if (!res.ok) throw new Error("Failed to load queue");
@@ -25,7 +22,33 @@ export default function CounterPage() {
     } catch (err: any) {
       setError(err.message || "Failed to load queue");
     }
-  };
+  }, [branchId]);
+
+  useEffect(() => {
+    if (!branchId) return;
+    loadQueue();
+  }, [branchId, loadQueue]);
+
+  useEffect(() => {
+    if (!branchId) return;
+    const client = getStompClient();
+    client.connect();
+    client.subscribe(`/topic/queue/${branchId}`, (frame) => {
+      try {
+        const updated = JSON.parse(frame.body);
+        setQueue((prev) => {
+          const exists = prev.find((t) => t.id === updated.id);
+          if (exists) return prev.map((t) => (t.id === updated.id ? updated : t));
+          return [updated, ...prev];
+        });
+      } catch (e) {
+        // ignore parse errors
+      }
+    });
+    return () => {
+      client.unsubscribe(`/topic/queue/${branchId}`);
+    };
+  }, [branchId]);
 
   const handleCallNext = async () => {
     setLoading(true);

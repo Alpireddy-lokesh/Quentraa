@@ -20,9 +20,11 @@ public class QueueService {
     private EntityManager entityManager;
 
     private final TokenRepository tokenRepository;
+    private final QueueEventService queueEventService;
 
-    public QueueService(TokenRepository tokenRepository) {
+    public QueueService(TokenRepository tokenRepository, QueueEventService queueEventService) {
         this.tokenRepository = tokenRepository;
+        this.queueEventService = queueEventService;
     }
 
     /** Call the next waiting token for a branch. Returns null if none. */
@@ -36,7 +38,9 @@ public class QueueService {
         Token token = waiting.get(0);
         token.setStatus(TokenStatus.CALLED);
         token.setCalledAt(Instant.now());
-        return tokenRepository.save(token);
+        token = tokenRepository.save(token);
+        queueEventService.publishTokenUpdate(branchId.toString(), token);
+        return token;
     }
 
     /** Mark token as SERVING. */
@@ -44,7 +48,9 @@ public class QueueService {
     public Token startServing(Token token) {
         token.setStatus(TokenStatus.SERVING);
         token.setServingAt(Instant.now());
-        return tokenRepository.save(token);
+        token = tokenRepository.save(token);
+        queueEventService.publishTokenUpdate(token.getBranch().getId().toString(), token);
+        return token;
     }
 
     /** Mark token as COMPLETED. */
@@ -52,21 +58,27 @@ public class QueueService {
     public Token complete(Token token) {
         token.setStatus(TokenStatus.COMPLETED);
         token.setCompletedAt(Instant.now());
-        return tokenRepository.save(token);
+        token = tokenRepository.save(token);
+        queueEventService.publishTokenUpdate(token.getBranch().getId().toString(), token);
+        return token;
     }
 
     /** Mark token as SKIPPED. */
     @Transactional
     public Token skip(Token token) {
         token.setStatus(TokenStatus.SKIPPED);
-        return tokenRepository.save(token);
+        token = tokenRepository.save(token);
+        queueEventService.publishTokenUpdate(token.getBranch().getId().toString(), token);
+        return token;
     }
 
     /** Mark token as CANCELLED. */
     @Transactional
     public Token cancel(Token token) {
         token.setStatus(TokenStatus.CANCELLED);
-        return tokenRepository.save(token);
+        token = tokenRepository.save(token);
+        queueEventService.publishTokenUpdate(token.getBranch().getId().toString(), token);
+        return token;
     }
 
     /** Recall a previously called/serving token back to WAITING. */
@@ -75,7 +87,9 @@ public class QueueService {
         token.setStatus(TokenStatus.WAITING);
         token.setCalledAt(null);
         token.setServingAt(null);
-        return tokenRepository.save(token);
+        token = tokenRepository.save(token);
+        queueEventService.publishTokenUpdate(token.getBranch().getId().toString(), token);
+        return token;
     }
 
     /** Count waiting tokens for a branch. */
