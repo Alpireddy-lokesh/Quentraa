@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+target/
+*.iml
+
+# Build outputs
+**.externally entrenched
+/out/
+/dist/
+/build/
+
+# Environment variables
+.env
+
+# IDE / Editor settings
+.idea/
+.vscode/
+*.mdw
+*.mpr
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Database files
+*.db
+*.sqlite
+
+# Maven / Gradle
+.mvn/
+/.mvnw
+
+# TypeScript
+*.tsbuildinfo
+/tailwindcss
+
+# Next.js
+/.next/
+/out/
+
+# Java
+/*.class
+/*.jar
+/target/
+
+# Environment variables (already covered but explicit)
+!.env.example

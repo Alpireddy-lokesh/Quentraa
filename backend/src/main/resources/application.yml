@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: quentraa-backend
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/queuesless}
+    username: ${SPRING_DATASOURCE_USERNAME:queuesless_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:queuesless_pass}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: ${SERVER_PORT:8080}
+
+# JWT (placeholders; override via env in production)
+app:
+  jwt:
+    secret: ${APP_JWT_SECRET:dev-only-jwt-secret-change-me-in-production-please-256bits}
+    expiration-ms: ${APP_JWT_EXPIRATION:3600000}
+
+logging:
+  level:
+    com.quentraa: INFO
+    org.springframework.web: INFO
