@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   const navItems = [
     { name: "Home", href: "/" },
@@ -31,10 +33,7 @@ export default function Navbar() {
                 key={item.name}
                 href={item.href}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  typeof window !== "undefined" &&
-                  window.location.pathname === item.href
-                    ? "bg-blue-600"
-                    : "hover:bg-blue-600"
+                  pathname === item.href ? "bg-blue-600" : "hover:bg-blue-600"
                 }`}
               >
                 {item.name}
