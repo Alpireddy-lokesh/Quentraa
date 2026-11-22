@@ -1,7 +1,6 @@
 package com.quentraa.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -12,7 +11,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "branches")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Branch {
 
     @Id
@@ -32,7 +30,6 @@ public class Branch {
     private boolean active = true;
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
     private List<Department> departments = new ArrayList<>();
 
     @CreationTimestamp
@@ -42,4 +39,21 @@ public class Branch {
     @UpdateTimestamp
     @Column(nullable = false)
     private Instant updatedAt;
+
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
+    public List<Department> getDepartments() { return departments; }
+    public void setDepartments(List<Department> departments) { this.departments = departments; }
+    public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+    public Instant getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 }
